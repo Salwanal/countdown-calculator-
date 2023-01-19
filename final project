@@ -1,0 +1,83 @@
+import datetime
+import time
+
+
+def main():
+  #gives a quick intro on how to use the program
+  def moving_intro():
+      # Define the introduction message
+      message = "Welcome to the Countdown Calculator!"
+      # Iterate through each character in the message
+      for char in message:
+          # Print the character and add a delay of 0.1 seconds
+          print(char, end='', flush=True)
+          time.sleep(0.1)
+      print("\n")
+      message2 = "You will be given multiple options to chose from for a format, please enter the number and not the full format."
+      for char in message2:
+          # Print the character and add a delay of 0.1 seconds
+          print(char, end='', flush=True)
+          time.sleep(0.05)
+      print('\n')
+      message3 = "Then please enter a date past todays"
+      for char in message3:
+          # Print the character and add a delay of 0.1 seconds
+          print(char, end='', flush=True)
+          time.sleep(0.05)
+      print('\n')
+      time.sleep(1)
+  moving_intro()
+
+  # Dictionary to store the different date formats
+  date_formats = {"1": "%Y-%m-%d", "2": "%m-%d-%Y", "3":"%d-%m-%Y"}
+  def get_target_date():
+  # while loop to keep asking for an input as long as either the format or the date are incorrect
+      while True:
+          # Ask the user to select a date format
+          date_format_num = input("Enter the date format (1- YYYY-MM-DD, 2- MM-DD-YYYY, 3- DD-MM-YYYY): ")
+          try:
+              # Get the target date from the user
+              target_date_str = input("Enter the target date in the selected format: ")
+              # Get the date format corresponding to the user's choice
+              date_format = date_formats.get(date_format_num, None)
+              if date_format is None:
+                  raise ValueError("Invalid date format number")
+              # Convert the string to a datetime object with the selected format
+              target_date = datetime.datetime.strptime(target_date_str, date_format)
+              # Check if the year entered is equal or larger than 2023
+              if target_date.year >= 2023:
+                  # If yes, return the date
+                  return target_date
+              else:
+                  # If not, print an error message and ask for the date again
+                  print("Invalid year, the year should be equal or larger than 2023")
+          except ValueError as e:
+              print(e)
+  #function checks that the date is in the future and not the past as a fail safe incase the months or days were behind and the year was right
+  def validate_date(target_date):
+    # uses datetime library to determine current time of running code
+      current_date = datetime.datetime.now()
+      if target_date < current_date:
+          raise ValueError("Invalid date: target date should be in the future")
+      return True
+
+  def countdown(target_date):
+    # calculate the difference between the target time and current time
+      current_date = datetime.datetime.now()
+    # uses divmod operation as it filters through the months, weeks, etc and leaves the remainder to the ne  xt
+      delta = target_date - current_date
+      months, remainder = divmod(delta.days, 30)
+      weeks, days = divmod(remainder, 7)
+      hours, remainder = divmod(delta.seconds, 3600)
+      minutes, seconds = divmod(remainder, 60)
+    # printing processed data
+      print(f"{months} months, {weeks} weeks, {days} days, {hours} hours, {minutes} minutes until {target_date}")
+
+  try:
+      target_date = get_target_date()
+      validate_date(target_date)
+      countdown(target_date)
+  except ValueError as e:
+      print(e)
+if __name__ == "__main__":
+  main()
